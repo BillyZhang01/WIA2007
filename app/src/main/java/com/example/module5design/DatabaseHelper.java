@@ -7,9 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "QuizDatabase";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 7;
 
     public static final String TABLE_NAME = "Questions";
     public static final String COLUMN_ID = "id";
@@ -67,7 +70,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "summary TEXT NOT NULL, " +
                     "status TEXT NOT NULL, " +
                     "FOREIGN KEY (expert_id) REFERENCES Experts(id))");
+        String CREATE_COURSES_TABLE = "CREATE TABLE Courses (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "title TEXT, " +
+                "description TEXT, " +
+                "url TEXT, " +
+                "difficulty TEXT)";
+        db.execSQL(CREATE_COURSES_TABLE);
 
+        insertInitialExperts(db);
+        insertInitialCourses(db);
         insertInitialExperts(db);
     }
 
@@ -78,6 +90,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS Experts");
         db.execSQL("DROP TABLE IF EXISTS Appointments");
         db.execSQL("DROP TABLE IF EXISTS Consultations");
+        db.execSQL("DROP TABLE IF EXISTS COURSES");
         onCreate(db); // 重新创建所有表
     }
 
@@ -326,6 +339,112 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert("Experts", null, values);
         Log.d("DatabaseHelper", "Inserted expert: " + values.get("name"));
     }
+    private void insertInitialCourses(SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+
+        // Beginner
+        values.put("title", "Soil physical properties 1");
+        values.put("description", "Soil physical properties refer to characteristics like texture, structure, density, porosity, moisture, and color, which influence soil's ability to support water, air movement, and plant growth. This is the first class.");
+        values.put("url", "https://www.youtube.com/watch?v=8gCWLCsFtRs&list=PLCT8-CYagFjNGGoQh6Rodvgh1PbhFrsWG&index=1");
+        values.put("difficulty", "Beginner");
+        db.insert("Courses", null, values);
+        values.clear();
+
+        values.put("title", "Soil physical properties 2");
+        values.put("description", "Soil physical properties refer to characteristics like texture, structure, density, porosity, moisture, and color, which influence soil's ability to support water, air movement, and plant growth. This is the second class.");
+        values.put("url", "https://www.youtube.com/watch?v=Gw8degTuOOo&list=PLCT8-CYagFjNGGoQh6Rodvgh1PbhFrsWG&index=2");
+        values.put("difficulty", "Beginner");
+        db.insert("Courses", null, values);
+        values.clear();
+
+        values.put("title", "Soil physical properties 3");
+        values.put("description", "Soil physical properties refer to characteristics like texture, structure, density, porosity, moisture, and color, which influence soil's ability to support water, air movement, and plant growth. This is the third class.");
+        values.put("url", "https://www.youtube.com/watch?v=Gw8degTuOOo&list=PLCT8-CYagFjNGGoQh6Rodvgh1PbhFrsWG&index=3");
+        values.put("difficulty", "Beginner");
+        db.insert("Courses", null, values);
+        values.clear();
+
+        values.put("title", "Soil physical properties 4");
+        values.put("description", "Soil physical properties refer to characteristics like texture, structure, density, porosity, moisture, and color, which influence soil's ability to support water, air movement, and plant growth. This is the last class.");
+        values.put("url", "https://www.youtube.com/watch?v=E2-VIRKxda0&list=PLCT8-CYagFjNGGoQh6Rodvgh1PbhFrsWG&index=4");
+        values.put("difficulty", "Beginner");
+        db.insert("Courses", null, values);
+        values.clear();
+
+        // Intermediate
+        values.put("title", "Resources and Development");
+        values.put("description", "Chapter 1 Geography NCERT class");
+        values.put("url", "https://www.youtube.com/watch?v=hTT_dXVbJ40&list=PL1vNLZF5gfweoo1UZYY3hF2e0UxXuf7lD");
+        values.put("difficulty", "Intermediate");
+        db.insert("Courses", null, values);
+        values.clear();
+
+        values.put("title", "Forest and Wildlife Resources");
+        values.put("description", "Chapter 2 Geography NCERT Class");
+        values.put("url", "https://www.youtube.com/watch?v=KnzX_uBPOcI&list=PL1vNLZF5gfweoo1UZYY3hF2e0UxXuf7lD&index=2");
+        values.put("difficulty", "Intermediate");
+        db.insert("Courses", null, values);
+        values.clear();
+
+        values.put("title", "Water Resources");
+        values.put("description", "Chapter 3 Geography NCERT Class");
+        values.put("url", "https://www.youtube.com/watch?v=T3B_Al78-So&list=PL1vNLZF5gfweoo1UZYY3hF2e0UxXuf7lD&index=3");
+        values.put("difficulty", "Intermediate");
+        db.insert("Courses", null, values);
+        values.clear();
+
+        values.put("title", "Indian Agriculture, Geography");
+        values.put("description", "Major Crops of India - Rabi, Kharif, Zaid crops");
+        values.put("url", "https://www.youtube.com/watch?v=IrwRM244lPQ&list=PL1vNLZF5gfweoo1UZYY3hF2e0UxXuf7lD&index=4");
+        values.put("difficulty", "Intermediate");
+        db.insert("Courses", null, values);
+        values.clear();
+
+        // Advanced
+        values.put("title", "Agriculture");
+        values.put("description", "Chapter 4 Geography NCERT Class");
+        values.put("url", "https://www.youtube.com/watch?v=ouANqty8Hr4&list=PL1vNLZF5gfweoo1UZYY3hF2e0UxXuf7lD&index=5");
+        values.put("difficulty", "Advanced");
+        db.insert("Courses", null, values);
+        values.clear();
+
+        values.put("title", "Minerals and Energy Resources");
+        values.put("description", "Chapter 5 Geography NCERT Class");
+        values.put("url", "https://www.youtube.com/watch?v=L-_Byj8jMS4&list=PL1vNLZF5gfweoo1UZYY3hF2e0UxXuf7lD&index=7");
+        values.put("difficulty", "Advanced");
+        db.insert("Courses", null, values);
+        values.clear();
+
+        values.put("title", "Energy Resources");
+        values.put("description", "Conventional and Non-Conventional");
+        values.put("url", "https://www.youtube.com/watch?v=Zgp86PVXXuQ&list=PL1vNLZF5gfweoo1UZYY3hF2e0UxXuf7lD&index=8");
+        values.put("difficulty", "Advanced");
+        db.insert("Courses", null, values);
+        values.clear();
+
+        values.put("title", "Manufacturing Industries");
+        values.put("description", "Class 10 Chapter 6 Geography NCERT");
+        values.put("url", "https://www.youtube.com/watch?v=OJnWA2DF6jQ&list=PL1vNLZF5gfweoo1UZYY3hF2e0UxXuf7lD&index=9");
+        values.put("difficulty", "Advanced");
+        db.insert("Courses", null, values);
+    }
+    public List<Course> getCoursesByDifficulty(String difficulty) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        List<Course> courseList = new ArrayList<>();
+        Cursor cursor = db.rawQuery("SELECT title, description, url FROM Courses WHERE difficulty=?", new String[]{difficulty});
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
+                String description = cursor.getString(cursor.getColumnIndexOrThrow("description"));
+                String url = cursor.getString(cursor.getColumnIndexOrThrow("url"));
+                courseList.add(new Course(title, description, url));
+            }
+            cursor.close();
+        }
+        db.close();
+        return courseList;
+    }
 
     // 获取所有专家信息的方法
     public Cursor getAllExperts() {
@@ -341,5 +460,68 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return count > 0; // 如果表中已有数据，返回 true
     }
+    // 插入预约记录
+    public void insertAppointment(int expertId, String date, String timeSlot, String status) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("expert_id", expertId);
+        values.put("date", date);
+        values.put("time_slot", timeSlot);
+        values.put("status", status);
+
+        long result = db.insert("Appointments", null, values);
+        if (result == -1) {
+            Log.e("DatabaseHelper", "Failed to insert appointment");
+        } else {
+            Log.d("DatabaseHelper", "Appointment inserted successfully");
+        }
+        db.close();
+    }
+
+    // 获取所有预约记录
+    public Cursor getAllAppointments() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT Appointments.id, Experts.name, Appointments.date, Appointments.time_slot, Appointments.status " +
+                "FROM Appointments " +
+                "JOIN Experts ON Appointments.expert_id = Experts.id", null);
+    }
+    public Cursor getConsultationsWithExpertNames() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT c.id, e.name AS expert_name, c.date, c.summary, c.status " +
+                "FROM Consultations c " +
+                "JOIN Experts e ON c.expert_id = e.id";
+        return db.rawQuery(query, null);
+    }
+    public Cursor getAppointmentsWithExpertNames() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT a.id, e.name AS expert_name, a.date, a.time_slot, a.status " +
+                "FROM Appointments a " +
+                "JOIN Experts e ON a.expert_id = e.id";
+        return db.rawQuery(query, null);
+    }
+
+    // 获取专家ID方法
+    public int getExpertIdByName(String expertName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int expertId = -1; // 默认值，如果未找到返回-1
+
+        Cursor cursor = db.rawQuery("SELECT id FROM Experts WHERE name = ?", new String[]{expertName});
+        if (cursor != null && cursor.moveToFirst()) {
+            expertId = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+            cursor.close();
+        }
+        return expertId;
+    }
+    public void deleteAppointment(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsAffected = db.delete("Appointments", "id=?", new String[]{String.valueOf(id)});
+        db.close();
+        if (rowsAffected > 0) {
+            Log.d("DatabaseHelper", "Appointment with id " + id + " deleted successfully.");
+        } else {
+            Log.d("DatabaseHelper", "No appointment found with id " + id);
+        }
+    }
+
 
 }

@@ -1,7 +1,9 @@
 package com.example.module5design;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,8 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyConsultationActivity extends AppCompatActivity {
+    private ConsultationAdapter adapter;
     private RecyclerView rvConsultations;
     private List<Consultation> consultationList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,18 +33,57 @@ public class MyConsultationActivity extends AppCompatActivity {
         });
         rvConsultations = findViewById(R.id.rvConsultations);
 
-        // 加载假数据（以后可以替换为数据库读取）
-        loadDummyData();
+        // 加载假数据
+        loadAppointmentData();
+
+
+
 
         // 设置RecyclerView
-        ConsultationAdapter adapter = new ConsultationAdapter(consultationList, this::onConsultationClicked);
+        adapter = new ConsultationAdapter(consultationList, this::onConsultationClicked);
         rvConsultations.setLayoutManager(new LinearLayoutManager(this));
         rvConsultations.setAdapter(adapter);
     }
-    private void loadDummyData() {
-        consultationList.add(new Consultation("John Doe", "2024-12-03", "Soil Management", "Completed"));
-        consultationList.add(new Consultation("Jane Smith", "2024-12-05", "Pest Control", "Pending Follow-Up"));
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadAppointmentData();
+        adapter.notifyDataSetChanged();
     }
+
+    //
+private void loadAppointmentData() {
+    DatabaseHelper dbHelper = new DatabaseHelper(this);
+    consultationList.clear(); // 清空旧数据
+
+    Cursor cursor = dbHelper.getAppointmentsWithExpertNames(); // 调用 JOIN 查询
+
+    if (cursor != null && cursor.moveToFirst()) {
+        do {
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+            String expertName = cursor.getString(cursor.getColumnIndexOrThrow("expert_name")); // 正确的列名
+            String date = cursor.getString(cursor.getColumnIndexOrThrow("date"));
+            String timeSlot = cursor.getString(cursor.getColumnIndexOrThrow("time_slot"));
+            String status = cursor.getString(cursor.getColumnIndexOrThrow("status"));
+            Log.d("MyConsultationActivity", "Loaded Appointment: ID=" + id +
+                    ", Expert=" + expertName + ", Date=" + date + ", TimeSlot=" + timeSlot + ", Status=" + status);
+
+            consultationList.add(new Consultation(id,expertName, date, timeSlot, status));
+        } while (cursor.moveToNext());
+        cursor.close();
+    } else {
+        Log.d("MyConsultationActivity", "No appointments found");
+    }
+    for (int i = 0; i < consultationList.size(); i++) {
+        Consultation c = consultationList.get(i);
+        Log.d("MyConsultationActivity", "Data at index " + i + ": " +
+                "ID=" + c.getId() + ", Expert=" + c.getExpertName() + ", Date=" + c.getDate());
+    }
+
+}
+
+
+
 
     private void onConsultationClicked(Consultation consultation) {
         Intent intent = new Intent(this, ConsultationDetailsActivity.class);

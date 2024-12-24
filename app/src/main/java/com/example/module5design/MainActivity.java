@@ -1,6 +1,7 @@
 package com.example.module5design;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setIndeterminate(false);
         progressBar.setMax(100);
         progressBar.setProgress(0);
-        simulateCircularProgress(progressBar);
+
         tvWeather=findViewById(R.id.TVWeather);
         String weatherInfo=getWeatherInfo();
         tvWeather.setText(weatherInfo);
@@ -91,6 +92,21 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Experts already initialized.", Toast.LENGTH_SHORT).show();
         }
+        int easyCompleted = getQuestionsCompleted("Easy");
+        int mediumCompleted = getQuestionsCompleted("Medium");
+        int hardCompleted = getQuestionsCompleted("Hard");
+
+        int totalCompleted = easyCompleted + mediumCompleted + hardCompleted;
+        int totalQuestions = 60; // Easy(20) + Medium(20) + Hard(20) = 60
+        int overallCompletionPercentage = (int)((totalCompleted * 100.0f) / totalQuestions);
+
+// 设置进度条与文本
+        progressBar.setIndeterminate(false);
+        progressBar.setMax(100);
+        progressBar.setProgress(overallCompletionPercentage);
+        tvProgress.setText("You have learned " + overallCompletionPercentage + "%");
+        simulateCircularProgress(progressBar,overallCompletionPercentage);
+
     }
 
     @Override
@@ -114,27 +130,61 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     //这部分需要从我们的database里面读取答题的进度报告
-    private void simulateCircularProgress(ProgressBar progressBar) {
-        int[] progress = {0}; // 使用数组存储进度值以支持匿名类
-        Handler handler = new Handler();
-
-        Runnable progressRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (progress[0] <= 100) {
-                    progressBar.setProgress(progress[0]); // 更新进度条
-                    tvProgress.setText("You have learned " + progress[0] + "%"); // 同步更新TextView
-                    progress[0] += 10; // 每次增加 10
-                    handler.postDelayed(this, 500); // 每 500 毫秒更新一次
-                } else {
-                    handler.removeCallbacks(this); // 停止更新
-                    tvProgress.setText("You have learned 100%");
-                }
+    private int getQuestionsCompleted(String difficulty) {
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        int questionsCompleted = 0;
+        Cursor cursor = dbHelper.getProgress(difficulty);
+        if (cursor != null && cursor.moveToFirst()) {
+            int index = cursor.getColumnIndex("questions_completed");
+            if (index != -1) {
+                questionsCompleted = cursor.getInt(index);
             }
-        };
-
-        handler.post(progressRunnable); // 开始更新
+            cursor.close();
+        }
+        return questionsCompleted;
     }
+
+//    private void simulateCircularProgress(ProgressBar progressBar) {
+//        int[] progress = {0}; // 使用数组存储进度值以支持匿名类
+//        Handler handler = new Handler();
+//
+//        Runnable progressRunnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                if (progress[0] <= 100) {
+//                    progressBar.setProgress(progress[0]); // 更新进度条
+//                    tvProgress.setText("You have learned " + progress[0] + "%"); // 同步更新TextView
+//                    progress[0] += 10; // 每次增加 10
+//                    handler.postDelayed(this, 500); // 每 500 毫秒更新一次
+//                } else {
+//                    handler.removeCallbacks(this); // 停止更新
+//                    tvProgress.setText("You have learned 100%");
+//                }
+//            }
+//        };
+//
+//        handler.post(progressRunnable); // 开始更新
+//    }
+private void simulateCircularProgress(ProgressBar progressBar, int targetProgress) {
+    int[] progress = {0};
+    Handler handler = new Handler();
+
+    Runnable progressRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (progress[0] <= targetProgress) {
+                progressBar.setProgress(progress[0]);
+                tvProgress.setText("You have learned " + progress[0] + "%");
+                progress[0]++;
+                handler.postDelayed(this, 20); // 每20毫秒更新1%
+            } else {
+                handler.removeCallbacks(this);
+            }
+        }
+    };
+    handler.post(progressRunnable);
+}
+
     //这部分需要我们从API中读取一个天气的数据，这个逻辑需要实现
     private String getWeatherInfo() {
         // 模拟返回一个固定的温度值（例如32°C）

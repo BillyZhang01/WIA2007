@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,10 +42,40 @@ public class ExpertDetailActivity extends AppCompatActivity {
         tvName.setText("Name: " + name);
         tvSpecialization.setText("Specialization: " + specialization);
         ratingBar.setRating((float) rating);
+//        Button btnBook = findViewById(R.id.BtnBook);
+//        btnBook.setOnClickListener(v -> {
+//            Intent intent = new Intent(ExpertDetailActivity.this, ScheduleAppointmentActivity.class);
+//            startActivity(intent);
+//        });
+//        Button btnBook = findViewById(R.id.BtnBook);
+//        btnBook.setOnClickListener(v -> {
+//            DatabaseHelper dbHelper = new DatabaseHelper(this);
+//            int expertId = dbHelper.getExpertIdByName(name); // 根据专家名字获取 ID
+//
+//            if (expertId != -1) {
+//                Intent intent = new Intent(ExpertDetailActivity.this, ScheduleAppointmentActivity.class);
+//                intent.putExtra("expert_id", expertId); // 传递专家 ID
+//                startActivity(intent);
+//            } else {
+//                Toast.makeText(this, "Error: Expert not found!", Toast.LENGTH_SHORT).show();
+//            }
+//        });
         Button btnBook = findViewById(R.id.BtnBook);
         btnBook.setOnClickListener(v -> {
-            Intent intent = new Intent(ExpertDetailActivity.this, ScheduleAppointmentActivity.class);
-            startActivity(intent);
+            // 跳转到预约界面，并传递专家信息
+            DatabaseHelper dbHelper = new DatabaseHelper(this);
+            int expertId = dbHelper.getExpertIdByName(name); // 根据名字获取专家ID
+
+            if (expertId != -1) {
+                Intent intent = new Intent(ExpertDetailActivity.this, ScheduleAppointmentActivity.class);
+                intent.putExtra("expert_id", expertId); // 传递专家ID
+                intent.putExtra("expertName", name);    // 传递专家名字（可选）
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Error: Expert not found!", Toast.LENGTH_SHORT).show();
+            }
         });
+
+
     }
 }

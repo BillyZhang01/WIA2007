@@ -109,26 +109,124 @@ public class ScheduleAppointmentActivity extends AppCompatActivity {
         row.addView(textView);
     }
 
-    private void showConfirmationDialog(String time, int dayIndex, Button slotButton) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Confirm Appointment");
-        builder.setMessage("Are you sure you want to book this slot: " + time + " on " + getDayName(dayIndex) + "?");
+//    private void showConfirmationDialog(String time, int dayIndex, Button slotButton) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setTitle("Confirm Appointment");
+//        builder.setMessage("Are you sure you want to book this slot: " + time + " on " + getDayName(dayIndex) + "?");
+//
+//        builder.setPositiveButton("Yes", (dialog, which) -> {
+//            // 更新预约状态
+//            bookingStatus.get(time)[dayIndex] = true;
+//
+//            // 更新按钮状态
+//            slotButton.setText("Booked");
+//            slotButton.setEnabled(false);
+//
+//            // 显示成功信息并弹出第二个确认弹窗
+//            showSuccessDialog();
+//        });
+//
+//        builder.setNegativeButton("No", null);
+//        builder.show();
+//    }
+//private void showConfirmationDialog(String time, int dayIndex, Button slotButton) {
+//    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//    builder.setTitle("Confirm Appointment");
+//    builder.setMessage("Are you sure you want to book this slot: " + time + " on " + getDayName(dayIndex) + "?");
+//
+//    builder.setPositiveButton("Yes", (dialog, which) -> {
+//        // 假设 expertId 固定为 1（以后可以动态传入）
+//        int expertId = 1;
+//        String date = getDayName(dayIndex); // 星期几作为日期
+//        String timeSlot = time;
+//
+//        // 插入预约记录到数据库
+//        DatabaseHelper dbHelper = new DatabaseHelper(this);
+//        dbHelper.insertAppointment(expertId, date, timeSlot, "Scheduled");
+//
+//        // 更新 UI 状态
+//        bookingStatus.get(time)[dayIndex] = true;
+//        slotButton.setText("Booked");
+//        slotButton.setEnabled(false);
+//
+//        // 显示成功消息
+//        showSuccessDialog();
+//    });
+//
+//    builder.setNegativeButton("No", null);
+//    builder.show();
+//}
+//private void showConfirmationDialog(String time, int dayIndex, Button slotButton) {
+//    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//    builder.setTitle("Confirm Appointment");
+//    builder.setMessage("Are you sure you want to book this slot: " + time + " on " + getDayName(dayIndex) + "?");
+//
+//    // 获取传递的 expertId
+//    int expertId = getIntent().getIntExtra("expert_id", -1); // -1 表示未找到的默认值
+//
+//    if (expertId == -1) {
+//        Toast.makeText(this, "Error: Expert ID not found!", Toast.LENGTH_SHORT).show();
+//        return;
+//    }
+//
+//    builder.setPositiveButton("Yes", (dialog, which) -> {
+//        String date = getDayName(dayIndex); // 星期几作为日期
+//        String timeSlot = time;
+//
+//        // 插入预约记录到数据库
+//        DatabaseHelper dbHelper = new DatabaseHelper(this);
+//        dbHelper.insertAppointment(expertId, date, timeSlot, "Scheduled");
+//
+//        // 更新 UI 状态
+//        bookingStatus.get(time)[dayIndex] = true;
+//        slotButton.setText("Booked");
+//        slotButton.setEnabled(false);
+//
+//        // 显示成功消息
+//        showSuccessDialog();
+//    });
+//
+//    builder.setNegativeButton("No", null);
+//    builder.show();
+//}
+private void showConfirmationDialog(String time, int dayIndex, Button slotButton) {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle("Confirm Appointment");
+    builder.setMessage("Are you sure you want to book this slot: " + time + " on " + getDayName(dayIndex) + "?");
 
-        builder.setPositiveButton("Yes", (dialog, which) -> {
-            // 更新预约状态
-            bookingStatus.get(time)[dayIndex] = true;
+    // 获取传递的 expertName
+    String expertName = getIntent().getStringExtra("expertName");
 
-            // 更新按钮状态
-            slotButton.setText("Booked");
-            slotButton.setEnabled(false);
+    // 查询 expertId
+    DatabaseHelper dbHelper = new DatabaseHelper(this);
+    int expertId = dbHelper.getExpertIdByName(expertName);
 
-            // 显示成功信息并弹出第二个确认弹窗
-            showSuccessDialog();
-        });
-
-        builder.setNegativeButton("No", null);
-        builder.show();
+    if (expertId == -1) {
+        Toast.makeText(this, "Error: Expert ID not found!", Toast.LENGTH_SHORT).show();
+        return;
     }
+
+    builder.setPositiveButton("Yes", (dialog, which) -> {
+        String date = getDayName(dayIndex); // 星期几作为日期
+        String timeSlot = time;
+
+        // 插入预约记录到数据库
+        dbHelper.insertAppointment(expertId, date, timeSlot, "Scheduled");
+
+        // 更新 UI 状态
+        bookingStatus.get(time)[dayIndex] = true;
+        slotButton.setText("Booked");
+        slotButton.setEnabled(false);
+
+        // 显示成功消息
+        showSuccessDialog();
+    });
+
+    builder.setNegativeButton("No", null);
+    builder.show();
+}
+
+
     private void showSuccessDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Booking Confirmed");

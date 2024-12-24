@@ -2,11 +2,14 @@ package com.example.module5design;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -26,19 +29,33 @@ public class AgriLabActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        TextView tvGreeting = findViewById(R.id.TV2Greeting); // 假设这是你的 TextView ID
+        TextView tvGreeting = findViewById(R.id.TV2Greeting);
         String greetingMessage = TimeUtils.getGreetingMessage();
         tvGreeting.setText(greetingMessage);
+        Button btnGoquiz = findViewById(R.id.BtnGoQuiz);
+        btnGoquiz.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AgriLabActivity.this, AgriIQActivity.class);
+                startActivity(intent);
+            }
+        });
         setupButtonLogic(R.id.BtnBeginner, "Beginner");
         setupButtonLogic(R.id.BtnIntermediate, "Intermediate");
         setupButtonLogic(R.id.BtnAdvanced, "Advanced");
+
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                finish(); // 返回到上一页
+                finish();
             }
         });
+
+
+
+
     }
+
     private void setupButtonLogic(int buttonId, String difficulty) {
         findViewById(buttonId).setOnClickListener(v -> {
             Intent intent = new Intent(AgriLabActivity.this, CourseListActivity.class);

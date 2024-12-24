@@ -42,12 +42,26 @@ public class ConsultationDetailsActivity extends AppCompatActivity {
         }
 
         // 删除按钮逻辑
+//        Button btnDelete = findViewById(R.id.btnDelete);
+//        if (btnDelete != null) {
+//            btnDelete.setOnClickListener(v -> {
+//                Toast.makeText(this, "Consultation deleted!", Toast.LENGTH_SHORT).show();
+//                finish();
+//            });
+//        }
         Button btnDelete = findViewById(R.id.btnDelete);
-        if (btnDelete != null) {
-            btnDelete.setOnClickListener(v -> {
-                Toast.makeText(this, "Consultation deleted!", Toast.LENGTH_SHORT).show();
-                finish();
-            });
-        }
+        btnDelete.setOnClickListener(v -> {
+            // 获取当前 Consultation 的 ID
+            int consultationId = consultation.getId();
+
+            DatabaseHelper dbHelper = new DatabaseHelper(ConsultationDetailsActivity.this);
+            dbHelper.deleteAppointment(consultationId);
+
+            Toast.makeText(ConsultationDetailsActivity.this, "Appointment deleted successfully.", Toast.LENGTH_SHORT).show();
+
+            // 删除后返回 MyConsultationActivity
+            finish();
+        });
+
     }
 }

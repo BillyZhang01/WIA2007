@@ -1,5 +1,6 @@
 package com.example.module5design;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,15 +31,25 @@ public class ConsultationAdapter extends RecyclerView.Adapter<ConsultationAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ConsultationViewHolder holder, int position) {
+        if (consultationList == null || consultationList.isEmpty()) {
+            Log.e("ConsultationAdapter", "Empty consultation list");
+            return;
+        }
         Consultation consultation = consultationList.get(position);
+        Log.d("ConsultationAdapter", "Binding data at position: " + position +
+                ", Expert: " + consultation.getExpertName() + ", Date: " + consultation.getDate());
+
         holder.tvExpertName.setText("Expert Name: " + consultation.getExpertName());
         holder.tvConsultationDate.setText("Date: " + consultation.getDate());
         holder.tvTopicSummary.setText("Topic: " + consultation.getTopicSummary());
         holder.btnViewDetails.setOnClickListener(v -> listener.onClick(consultation));
+        Log.d("ConsultationAdapter", "Binding data at position: " + position);
+
     }
 
     @Override
     public int getItemCount() {
+        Log.d("ConsultationAdapter", "Total items: " + consultationList.size());
         return consultationList.size();
     }
 

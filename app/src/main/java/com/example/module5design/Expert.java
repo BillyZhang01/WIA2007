@@ -6,6 +6,7 @@ public class Expert {
     private double rating;
     private int avatarResId;
 
+
     public Expert(String name, String specialization, double rating, int avatarResId) {
         this.name = name;
         this.specialization = specialization;

@@ -1,6 +1,5 @@
 package com.example.module5design;
 
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,4 +53,3 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         void onClick(Course course);
     }
 }
-

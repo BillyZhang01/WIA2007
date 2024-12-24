@@ -79,10 +79,22 @@ public class ExpertDirectory extends AppCompatActivity {
 
 
     // 点击专家时触发的事件
+//
+//    private void onExpertClicked(Expert expert) {
+//        Log.d("ExpertDirectory", "Expert clicked: Name=" + expert.getName() +
+//                ", Specialization=" + expert.getSpecialization() +
+//                ", Rating=" + expert.getRating());
+//
+//        Intent intent = new Intent(this, ExpertDetailActivity.class);
+//        intent.putExtra("expertName", expert.getName()); // 传递专家名字
+//        startActivity(intent);
+//    }
     private void onExpertClicked(Expert expert) {
         Log.d("ExpertDirectory", "Expert clicked: Name=" + expert.getName() +
                 ", Specialization=" + expert.getSpecialization() +
                 ", Rating=" + expert.getRating());
+
+        // 跳转到 ExpertDetailActivity，并传递专家信息
         Intent intent = new Intent(this, ExpertDetailActivity.class);
         intent.putExtra("expertName", expert.getName());
         intent.putExtra("expertSpecialization", expert.getSpecialization());
@@ -90,4 +102,6 @@ public class ExpertDirectory extends AppCompatActivity {
         intent.putExtra("avatarResId", expert.getAvatarResId());
         startActivity(intent);
     }
+
+
 }
